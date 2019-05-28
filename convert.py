@@ -146,7 +146,7 @@ def main(arg_list=None):
     parser.add_argument('-i', dest='csv_input_file',
                         help='name of LabView ECG lead fail CSV result file', required=True)
     parser.add_argument('-o', dest='csv_output_file',
-                        help='name of CSV output file to write new ecg lead fail statistics to', required=True)
+                        help='name of CSV output file to write new ecg lead fail statistics to', required=False)
     parser.add_argument('-v', dest='verbose', default=False, action='store_true',
                         help='verbose output flag', required=False)
     parser.add_argument('--version', action='version', help='Print version.',
@@ -167,6 +167,11 @@ def main(arg_list=None):
         print('\n\n')
         parser.print_help()
         return -1
+
+    # Has the user specified and output file?  If not, create one for them based on the input filename.
+    if args.csv_output_file is None:
+        # An output file name was not given, so build one
+        args.csv_output_file = os.path.splitext(os.path.basename(args.csv_input_file))[0] + '_converted.csv'
 
     # endregion
 
