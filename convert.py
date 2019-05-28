@@ -175,7 +175,8 @@ def main(arg_list=None):
         csv_reader = csv.reader(cvs_input_file)
         rows = list(csv_reader)
 
-    # Get the reference electrode setting
+    # Get the reference electrode setting and wait time.
+    # They will be included with the data columns 0 and 4 respectively.
     reference_electrode_setting = rows[1][0]
     wait_time = rows[1][4]
 
