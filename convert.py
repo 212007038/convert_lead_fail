@@ -69,7 +69,7 @@ def convert_to_electrode_header(electrode_status_list):
     # Build the header for the electrode status
     electrode_status_header_string = ''
     for electrode_status_string in electrode_status_list:
-        electrode_status_header_string = electrode_status_header_string + electrode_status_string + ' Connection State, '
+        electrode_status_header_string = electrode_status_header_string + electrode_status_string + ' Electrode State, '
 
     # Strip junk off end...
     electrode_status_header_string = electrode_status_header_string[:-2]
@@ -99,7 +99,7 @@ def convert_to_lead_header(lead_list):
     # Build the header for the electrode status
     lead_status_header_string = ''
     for lead_status_string in lead_list:
-        lead_status_header_string = lead_status_header_string + lead_status_string + ' Connection State, '
+        lead_status_header_string = lead_status_header_string + lead_status_string + ' Lead State, '
 
     # Strip junk off end...
     lead_status_header_string = lead_status_header_string[:-2]
@@ -170,34 +170,31 @@ def main(arg_list=None):
 
     # endregion
 
-    # Open input CSV...
+    # Open input CSV and read ALL the rows...
     with open(args.csv_input_file) as cvs_input_file:
-        read_csv = csv.reader(cvs_input_file, delimiter=',')
+        csv_reader = csv.reader(cvs_input_file)
+        rows = list(csv_reader)
 
-        # Read the header.
-        headers = next(read_csv, None)
-        #print('Reference : {}'.format(headers[0]))
+    # Get the reference electrode setting
+    reference_electrode_setting = rows[1][0]
+    wait_time = rows[1][4]
 
-        # Now read the 1st data row to get the reference electrode settings and then rewind...
-        first_data_row = next(read_csv, None)
-        reference_electrode_setting = first_data_row[0] # get the settings
-        
+    # Okay, input file successfully opened and all the lines read, time to open the output file and start writing...
+    with open(args.csv_output_file, 'w') as csv_output_file:
+        # Output header information...
+        print('Reference electrode: {}; wait time in seconds: {}'.format(
+            reference_electrode_setting, wait_time), file=csv_output_file)
+        print(relay_state_header + ', ' + electrode_state_header + ', ' + lead_state_header, file=csv_output_file)
 
-        print(reference_electrode_setting)
+        # Rip through all the rows (skipping first row).
+        for row in rows[1:]:
+            #print(row)
+            relay_state = convert_to_relay_state(row[1])
+            electrode_state = convert_to_electrode_state(row[2])
+            lead_state = convert_to_lead_state(row[3])
 
-
-        # Okay, input file successfully opened, time to open the output file and start writing...
-        with open(args.csv_output_file, 'w') as cvs_output_file:
-            print(relay_state_header + ', ' + electrode_state_header + ', ' + lead_state_header, file=cvs_output_file)
-            # Now process the rest...
-            for row in read_csv:
-                relay_state = convert_to_relay_state(row[1])
-                electrode_state = convert_to_electrode_state(row[2])
-                lead_state = convert_to_lead_state(row[3])
-
-                # Print the big row...
-                print(relay_state + ", " + electrode_state + ', ' + lead_state, file=cvs_output_file)
-
+            # Print the big row...
+            print(relay_state + ", " + electrode_state + ', ' + lead_state, file=csv_output_file)
 
 
 # endregion
