@@ -19,7 +19,7 @@ RELAY_STATE_LIST = [
 
 
 ELECTRODE_FAIL_LIST = [
-    'RA', 'LA', 'LL', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'x1', 'x1', 'x1', 'x1', 'x1', 'x1', 'RL'
+    'RA', 'LA', 'LL', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'x1', 'x2', 'x3', 'x4', 'x5', 'x1', 'RL'
 ]
 
 LEAD_FAIL_LIST = [
